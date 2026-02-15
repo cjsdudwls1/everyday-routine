@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Routine Flow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="app">
+    <button id="btn-reset" class="top-reset-btn">초기화</button>
+
+    <!-- Live 24H Clock Widget -->
+    <div id="live-clock-widget" class="live-clock hidden">
+      <div class="clock-face" id="clock-face"></div>
+      <div class="clock-overlay">
+        <span class="clock-label">Total</span>
+        <span id="clock-total-time" class="clock-value">0h</span>
+      </div>
+    </div>
+
+    <!-- STEP 1: Task Entry -->
+    <section id="step-1" class="step-view active">
+      <h1 class="step-title">오늘 할 일을<br>모두 적어주세요</h1>
+      <p class="step-subtitle">순서는 나중에 정할 수 있어요.</p>
+
+      <div class="input-wrapper">
+        <input type="text" id="task-input-field" placeholder="예: 영어 공부하기" autocomplete="off">
+      </div>
+
+      <div class="task-chips-container" id="chip-container">
+        <!-- Dynamic Chips -->
+      </div>
+
+      <div class="site-intro">
+        <div class="intro-divider"></div>
+        <h3 class="intro-title">루틴 플로우 200% 활용하기</h3>
+        <div class="intro-steps">
+          <div class="intro-step-item">
+            <div class="step-icon-box">📝</div>
+            <p>할 일 입력</p>
+          </div>
+          <div class="step-arrow"></div>
+          <div class="intro-step-item">
+            <div class="step-icon-box">⏱️</div>
+            <p>시간 배분</p>
+          </div>
+          <div class="step-arrow"></div>
+          <div class="intro-step-item">
+            <div class="step-icon-box">✨</div>
+            <p>하루 완성</p>
+          </div>
+        </div>
+        <p class="intro-desc">
+          복잡한 계획은 그만.<br>
+          할 일만 적으면 시간이 저절로 정리돼요.
+        </p>
+      </div>
+
+      <div class="bottom-cta">
+        <button id="btn-to-step-2" class="cta-btn" disabled>다음</button>
+      </div>
+    </section>
+
+    <!-- STEP 2: Planning & Ordering -->
+    <section id="step-2" class="step-view hidden">
+      <div class="step-header">
+        <h2 class="step-sub-title">언제, 얼마나<br>진행할까요?</h2>
+        <p class="step-desc">시간을 조정하고 순서를 바꿔보세요.</p>
+      </div>
+
+      <div class="wakeup-row">
+        <span>기상 시간</span>
+        <button id="wake-up-time-btn" class="time-btn">07:00</button>
+      </div>
+
+      <!-- Standby Dock -->
+      <div class="standby-dock">
+        <div class="standby-item" draggable="true" data-type="meal">
+          <span class="icon">🍚</span> 식사 (30분)
+        </div>
+        <div class="standby-item" draggable="true" data-type="rest">
+          <span class="icon">☕</span> 휴식 (10분)
+        </div>
+      </div>
+
+      <div id="planning-list" class="planning-list">
+        <!-- Task Cards go here -->
+      </div>
+
+    </section>
+
+    <!-- STEP 3: Result View (The Day Sheet) -->
+    <section id="step-3" class="step-view hidden">
+      <h1 class="step-title">오늘의 루틴이<br>완성되었어요!</h1>
+      <p class="step-subtitle">알차게 보내세요.</p>
+
+      <div class="result-timeline" id="final-timeline">
+        <!-- Final Timeline Visualization -->
+      </div>
+
+      <div class="bottom-cta" style="display: flex; gap: 10px;">
+        <button id="btn-edit-routine" class="cta-btn"
+          style="background: #E5E8EB; color: #333; box-shadow: none;">수정</button>
+        <button id="btn-save-image" class="cta-btn">저장하기</button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Time Picker Modal (Reusable) -->
+  <div id="time-picker-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="modal-picker-title">시간 설정</h3>
+      <div class="time-picker-container">
+        <div class="picker-column" id="picker-hour"></div>
+        <div class="picker-separator">:</div>
+        <div class="picker-column" id="picker-minute"></div>
+        <div class="picker-highlight"></div>
+      </div>
+      <div class="modal-actions">
+        <button id="picker-cancel" class="modal-btn secondary">취소</button>
+        <button id="picker-confirm" class="modal-btn primary">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,947 @@
+/* Toss-like UI & Animations */
+:root {
+  --toss-blue: #0064FF;
+  --toss-bg: #F2F4F6;
+  --toss-text: #191F28;
+  --toss-grey: #8B95A1;
+  --toss-light-grey: #E5E8EB;
+  --white: #FFFFFF;
+  --safe-area-bottom: env(safe-area-inset-bottom);
+}
+
+body {
+  background: var(--toss-bg);
+  color: var(--toss-text);
+  font-family: 'Outfit', sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  display: block;
+  /* Reset from flex center */
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+#app {
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background: var(--white);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  /* For transitions */
+}
+
+.top-reset-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 100;
+  background: none;
+  border: none;
+  color: var(--toss-grey);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.top-reset-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--toss-text);
+}
+
+/* Step Views */
+.step-view {
+  padding: 24px;
+  padding-bottom: 100px;
+  /* Space for bottom button */
+  min-height: 100vh;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--white);
+}
+
+.step-view.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(50px);
+  display: none;
+  /* Hide from layout */
+}
+
+.step-view.active {
+  opacity: 1;
+  transform: translateX(0);
+  display: block;
+  z-index: 1;
+}
+
+/* Headers */
+h1.step-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--toss-text);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+p.step-subtitle {
+  font-size: 16px;
+  color: var(--toss-grey);
+  margin-bottom: 32px;
+}
+
+/* Live Clock Widget - MAX SIZE */
+/* Live Clock Widget - Base (Small/Mobile/Tablet) */
+.live-clock {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  width: 80px;
+  height: 80px;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  transition: all 0.5s ease;
+  opacity: 0.8;
+}
+
+.live-clock .clock-value,
+.live-clock .clock-label,
+.live-clock .clock-slice-label,
+.live-clock .marker-label {
+  display: none;
+  /* Hide details on small view */
+}
+
+/* SPLIT LAYOUT - Desktop (> 1100px) */
+/* SPLIT LAYOUT - Desktop (> 1100px) */
+@media (min-width: 1100px) {
+
+  /* Layout Container */
+  #app {
+    width: 100%;
+    max-width: none;
+    /* Override limits */
+    min-height: 100vh;
+    padding: 0;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* 50% 50% split */
+    align-items: flex-start;
+    /* Align top */
+  }
+
+  /* Reset positioning for Grid Items */
+  .step-view {
+    position: relative;
+    /* Crucial: Make them participate in Grid flow */
+    width: 100%;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    /* Let grid/margin handle spacing */
+    min-height: auto;
+    /* Remove 100vh limit if needed */
+  }
+
+  /* Step 1: Center Aligned in Full Page */
+  #step-1 {
+    grid-column: 1 / -1;
+    /* Span Full Width */
+    justify-self: center;
+    /* Center horizontally in the grid track */
+    align-self: flex-start;
+
+    width: 100%;
+    max-width: 600px;
+    margin: 10vh auto 0 auto;
+    /* Moved up slightly */
+    padding: 0 24px 100px 24px;
+    /* Added bottom padding to avoid button overlap */
+
+    display: block;
+    /* Using Block layout to ensure input width works */
+    text-align: center;
+  }
+
+  #step-1 .step-title,
+  #step-1 .step-desc,
+  #step-1 .step-subtitle {
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Fix: Ensure input wrapper takes full width */
+  #step-1 .input-wrapper {
+    margin: 24px auto;
+    width: 100%;
+    max-width: 100%;
+    display: block;
+  }
+
+  /* Steps 2 & 3: Right Column */
+  #step-2,
+  #step-3 {
+    grid-column: 2;
+    /* Right Half */
+
+    width: 100%;
+    max-width: 550px;
+    margin: 40px auto;
+    /* Center in the column */
+    padding: 0 40px 150px 40px;
+    /* Add bottom padding to prevent button overlap */
+
+    justify-self: center;
+  }
+
+  /* Big Clock on Left Column */
+  .live-clock {
+    position: fixed;
+    /* Fixed relative to viewport */
+    top: 50%;
+    left: 25%;
+    /* Left Column Center */
+    right: auto;
+
+    width: 45vh;
+    height: auto;
+    /* Let aspect-ratio handle height */
+    aspect-ratio: 1 / 1;
+    /* Force Square */
+
+    max-width: 500px;
+    max-height: 500px;
+    /* If aspect-ratio matches, this clamps both */
+
+    transform: translate(-50%, -50%);
+    opacity: 1;
+    z-index: 10;
+  }
+
+  /* Show Details */
+  .live-clock .clock-value,
+  .live-clock .clock-label {
+    display: none;
+    /* Hide Total Time as requested */
+  }
+
+  .live-clock .clock-slice-label,
+  .live-clock .marker-label {
+    display: block;
+  }
+}
+
+.live-clock.hidden {
+  opacity: 0;
+  pointer-events: none;
+  display: none;
+}
+
+/* Clock Face Base */
+.clock-face {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--toss-bg);
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  /* Reduced shadow for base */
+}
+
+/* Donut Chart Mask */
+.clock-face::after {
+  content: '';
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  width: 50%;
+  height: 50%;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+  z-index: 2;
+}
+
+@media (min-width: 1100px) {
+  .clock-face::after {
+    top: 35%;
+    left: 35%;
+    width: 30%;
+    height: 30%;
+  }
+}
+
+.marker-label {
+  font-size: 12px;
+  color: var(--toss-grey);
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2px 4px;
+  border-radius: 4px;
+  transform: translateY(-50%);
+}
+
+.marker-inner {
+  /* Not used if we position labels absolutely around */
+}
+
+/* Slice Labels */
+.clock-slice-label {
+  position: absolute;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* FAB Add Button */
+.fab-add {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--toss-blue);
+  color: white;
+  border: none;
+  font-size: 30px;
+  box-shadow: 0 4px 12px rgba(0, 100, 255, 0.4);
+  cursor: pointer;
+  z-index: 90;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.fab-add:active {
+  transform: scale(0.9);
+}
+
+/* Insert Zones for Interactive Placement */
+.insert-zone {
+  height: 12px;
+  margin: 4px 0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.insert-zone::after {
+  content: "+ 여기에 추가";
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--toss-blue);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.placement-mode .insert-zone {
+  height: 50px;
+  background: rgba(0, 100, 255, 0.05);
+  border: 2px dashed rgba(0, 100, 255, 0.3);
+}
+
+.placement-mode .insert-zone:hover,
+.placement-mode .insert-zone:active {
+  background: rgba(0, 100, 255, 0.1);
+  border-color: var(--toss-blue);
+}
+
+.placement-mode .insert-zone::after {
+  opacity: 1;
+}
+
+/* Step 1: Input */
+.input-wrapper {
+  margin-bottom: 24px;
+}
+
+#task-input-field {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid var(--toss-light-grey);
+  padding: 12px 0;
+  font-size: 18px;
+  outline: none;
+  transition: border-color 0.2s;
+  border-radius: 0;
+}
+
+#task-input-field:focus {
+  border-color: var(--toss-blue);
+}
+
+.task-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  /* Center align chips */
+}
+
+.task-chip {
+  background: var(--toss-light-grey);
+  color: var(--toss-text);
+  padding: 10px 16px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+
+.task-chip .remove {
+  color: var(--toss-grey);
+  font-weight: bold;
+}
+
+/* Standby Dock */
+.standby-dock {
+  display: flex;
+  gap: 12px;
+  background: var(--white);
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+}
+
+.standby-item {
+  flex: 1;
+  background: #F8F9FA;
+  border: 1px solid #E9ECEF;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--toss-grey);
+  cursor: grab;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.standby-item:active {
+  cursor: grabbing;
+}
+
+.standby-item:hover {
+  background: #F1F3F5;
+  border-color: #DEE2E6;
+  color: var(--toss-text);
+}
+
+.standby-item[data-type="meal"] .icon {
+  font-size: 18px;
+}
+
+.standby-item[data-type="rest"] .icon {
+  font-size: 18px;
+}
+
+/* Step 2: List */
+.timeline-setting {
+  background: var(--toss-bg);
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timeline-setting label {
+  font-weight: 600;
+  color: var(--toss-grey);
+}
+
+.card-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.delete-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: #F1F3F5;
+  color: #868E96;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-btn:hover {
+  background: #FFE3E3;
+  color: #FA5252;
+}
+
+.time-btn {
+  background: var(--white);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  color: var(--toss-blue);
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+.sortable-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-card {
+  background: var(--white);
+  border: 1px solid var(--toss-light-grey);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.task-card.dragging {
+  opacity: 0.5;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-time {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--toss-blue);
+  background: rgba(0, 100, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  flex: 1;
+  margin-left: 10px;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--toss-bg);
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.duration-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dur-btn {
+  width: 28px;
+  height: 28px;
+  background: var(--white);
+  border-radius: 50%;
+  border: 1px solid var(--toss-light-grey);
+  color: var(--toss-text);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.dur-text {
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 60px;
+  text-align: center;
+}
+
+.move-btn {
+  color: var(--toss-grey);
+  font-size: 20px;
+  cursor: grab;
+  padding: 8px;
+  touch-action: none;
+  /* Essential for mobile drag */
+}
+
+/* Step 3: Result (Timeline) */
+.timeline-item.completed .timeline-content {
+  background: #E8F5E9;
+  /* Light Green */
+  color: #2E7D32;
+  text-decoration: line-through;
+  opacity: 0.8;
+}
+
+.timeline-item.completed .timeline-dot {
+  background: #4CAF50;
+}
+
+/* Re-using some of the old styles but cleaner */
+.result-timeline {
+  position: relative;
+  padding-left: 20px;
+  border-left: 2px solid var(--toss-light-grey);
+  margin-top: 20px;
+}
+
+.timeline-item {
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -27px;
+  top: 0;
+  width: 12px;
+  height: 12px;
+  background: var(--toss-blue);
+  border-radius: 50%;
+  border: 4px solid var(--white);
+}
+
+/* Task Index Badge */
+.task-index-badge {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  background-color: var(--toss-blue);
+  color: white;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+.task-index-badge.small {
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  margin-right: 6px;
+  background-color: var(--toss-grey);
+  /* Different color for timeline/passive */
+}
+
+/* Card Header Layout */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  /* Increased to separate header from actions */
+}
+
+/* Group time and badge */
+.card-info-main {
+  display: flex;
+  align-items: center;
+}
+
+/* Update Clock Label Style */
+.clock-slice-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: 800;
+  font-size: 16px;
+  /* Bigger number */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.timeline-time {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: var(--toss-grey);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.timeline-content {
+  background: var(--toss-bg);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Floating Bottom Button - Default Fixed */
+.bottom-cta {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 48px);
+  max-width: 552px;
+  z-index: 100;
+}
+
+/* Step 1 Specific: Make button static (in-flow) or push content up */
+/* To visually match "Toss" logic where button is at bottom but content scrolls, we usually add padding to body. */
+/* But if content is small (like just input), fixed button covers it if centered? */
+/* The input is at margin-top: 15vh. The button is at bottom: 30px. */
+/* If screen is short, they overlap. */
+
+@media (max-height: 700px) {
+  #step-1 {
+    margin-top: 10vh;
+    /* Move up on short screens */
+  }
+}
+
+.cta-btn {
+  width: 100%;
+  background: var(--toss-blue);
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 100, 255, 0.3);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.cta-btn:active {
+  transform: scale(0.98);
+}
+
+.cta-btn:disabled {
+  background: var(--toss-light-grey);
+  color: #bbb;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Helpers */
+.hidden {
+  display: none !important;
+}
+
+/* Site Intro Section */
+.site-intro {
+  margin-top: 80px;
+  text-align: center;
+  opacity: 0.8;
+  padding-bottom: 40px;
+  /* Space for scroll */
+}
+
+.intro-divider {
+  width: 40px;
+  height: 4px;
+  background: var(--toss-light-grey);
+  margin: 0 auto 30px auto;
+  border-radius: 2px;
+}
+
+.intro-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--toss-text);
+  margin-bottom: 24px;
+}
+
+.intro-steps {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.intro-step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-icon-box {
+  width: 60px;
+  height: 60px;
+  background: var(--white);
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--toss-light-grey);
+}
+
+.intro-step-item p {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--toss-grey);
+  margin: 0;
+}
+
+.step-arrow {
+  width: 20px;
+  height: 2px;
+  background: var(--toss-light-grey);
+  position: relative;
+  top: -14px;
+  /* Align with box center */
+}
+
+.step-arrow::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid var(--toss-light-grey);
+  border-right: 2px solid var(--toss-light-grey);
+  transform: rotate(45deg);
+}
+
+.intro-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--toss-grey);
+  margin-top: 20px;
+}
+
+/* Real-time Visualization */
+.clock-hand {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 50%;
+  background-color: #FF0000;
+  transform-origin: bottom center;
+  z-index: 20;
+  pointer-events: none;
+  transition: transform 0.5s cubic-bezier(0.4, 2.08, 0.55, 0.44);
+}
+
+.clock-hand::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -4px;
+  width: 8px;
+  height: 8px;
+  background-color: #FF0000;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Past Task Style */
+.task-card.past {
+  opacity: 0.6;
+  filter: grayscale(100%);
+  border-color: var(--toss-light-grey);
+}
+
+.task-card.past .card-title {
+  text-decoration: line-through;
+  color: var(--toss-grey);
+}
+
+/* Current Task Style */
+.task-card.current {
+  border: 2px solid var(--toss-blue);
+  background-color: #F2F8FF;
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(0, 100, 255, 0.15);
+  z-index: 5;
+}
+
+.task-card.current::before {
+  content: '진행 중';
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  background: var(--toss-blue);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure step icon doesn't look weird on small screens */
+@media (max-width: 360px) {
+  .step-icon-box {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+  }
+
+  .intro-steps {
+    gap: 8px;
+  }
+}
