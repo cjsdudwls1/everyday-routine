@@ -945,3 +945,41 @@ p.step-subtitle {
     gap: 8px;
   }
 }
+
+/* Footer Styling */
+.site-footer {
+  margin-top: 60px;
+  padding-bottom: 120px;
+  /* Space for fixed bottom button */
+  text-align: center;
+  font-size: 13px;
+  color: var(--toss-grey);
+  width: 100%;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.footer-links a {
+  color: var(--toss-grey);
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+
+.footer-links a:hover {
+  color: var(--toss-text);
+  text-decoration: underline;
+}
+
+.copyright {
+  margin: 0;
+  opacity: 0.8;
+  font-weight: 400;
+}
