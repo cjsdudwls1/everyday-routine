@@ -1,16 +1,161 @@
-// State Management
 const state = {
   step: 1, // 1: Input, 2: Planning, 3: Result
   tasks: [], // Array of { id, text, duration (min), startTime (calc) }
   wakeUpTime: '07:00',
   currentDate: '',
-  dragStartIndex: -1
+  dragStartIndex: -1,
+  lang: 'ko' // Default
+};
+
+const translations = {
+  ko: {
+    reset: "초기화",
+    step1_title: "오늘 할 일을<br>모두 적어주세요",
+    step1_subtitle: "순서는 나중에 정할 수 있어요.",
+    placeholder: "예: 영어 공부하기",
+    intro_title: "루틴 플로우 200% 활용하기",
+    intro_step1: "할 일 입력",
+    intro_step2: "시간 배분",
+    intro_step3: "하루 완성",
+    intro_desc: "복잡한 계획은 그만.<br>할 일만 적으면 시간이 저절로 정리돼요.",
+    footer_about: "서비스 소개",
+    footer_privacy: "개인정보처리방침",
+    footer_terms: "이용약관",
+    btn_next: "다음",
+    step2_title: "언제, 얼마나<br>진행할까요?",
+    step2_subtitle: "시간을 조정하고 순서를 바꿔보세요.",
+    label_wakeup: "기상 시간",
+    standby_meal: "식사",
+    standby_rest: "휴식",
+    step3_title: "오늘의 루틴이<br>완성되었어요!",
+    step3_subtitle: "알차게 보내세요.",
+    btn_edit: "수정",
+    btn_save: "저장하기",
+    modal_title: "시간 설정",
+    btn_cancel: "취소",
+    btn_confirm: "확인",
+    // JS Alerts
+    prompt_new_task: "새로운 할 일을 입력하세요:",
+    alert_placement: "원하는 위치를 선택해주세요!",
+    prompt_duration: "'{task}'의 시간을 입력해주세요.\n예: '1시간', '30분', '1시간 20분'",
+    alert_duration_error: "시간을 이해하지 못했어요. '1시간 30분' 처럼 입력해주세요.",
+    confirm_reset: "모든 일정을 초기화하고 처음으로 돌아갈까요?",
+    confirm_complete: "'{task}'를 완료했나요?",
+    label_bedtime: "취침 시간",
+    current_status: "진행 중"
+  },
+  en: {
+    reset: "Reset",
+    step1_title: "List all your tasks<br>for today",
+    step1_subtitle: "You can arrange them later.",
+    placeholder: "E.g. Study English",
+    intro_title: "Maximize Routine Flow",
+    intro_step1: "List Tasks",
+    intro_step2: "Allocate Time",
+    intro_step3: "Complete Day",
+    intro_desc: "No more complex planning.<br>Just list tasks and organize your time.",
+    footer_about: "About",
+    footer_privacy: "Privacy",
+    footer_terms: "Terms",
+    btn_next: "Next",
+    step2_title: "When and how long?",
+    step2_subtitle: "Adjust time and order.",
+    label_wakeup: "Wake Up",
+    standby_meal: "Meal",
+    standby_rest: "Rest",
+    step3_title: "Your routine is<br>ready!",
+    step3_subtitle: "Have a productive day.",
+    btn_edit: "Edit",
+    btn_save: "Save",
+    modal_title: "Set Time",
+    btn_cancel: "Cancel",
+    btn_confirm: "Confirm",
+    prompt_new_task: "Enter a new task:",
+    alert_placement: "Please select a location!",
+    prompt_duration: "Enter duration for '{task}'.\nE.g. '1 hour', '30 min'",
+    alert_duration_error: "Could not understand. Try '1 hour 30 min'.",
+    confirm_reset: "Reset all schedules and start over?",
+    confirm_complete: "Did you complete '{task}'?",
+    label_bedtime: "Bedtime",
+    current_status: "Ongoing"
+  },
+  zh: {
+    reset: "重置",
+    step1_title: "请写下今天<br>所有的待办事项",
+    step1_subtitle: "顺序稍后可以调整。",
+    placeholder: "例如：学习英语",
+    intro_title: "充分利用 Routine Flow",
+    intro_step1: "输入待办",
+    intro_step2: "分配时间",
+    intro_step3: "完成计划",
+    intro_desc: "告别复杂的计划。<br>只需列出待办，时间自动整理。",
+    footer_about: "关于服务",
+    footer_privacy: "隐私政策",
+    footer_terms: "使用条款",
+    btn_next: "下一步",
+    step2_title: "何时进行，<br>持续多久？",
+    step2_subtitle: "请调整时间和顺序。",
+    label_wakeup: "起床时间",
+    standby_meal: "用餐",
+    standby_rest: "休息",
+    step3_title: "今天的日程<br>已完成！",
+    step3_subtitle: "祝您度过充实的一天。",
+    btn_edit: "修改",
+    btn_save: "保存",
+    modal_title: "时间设置",
+    btn_cancel: "取消",
+    btn_confirm: "确认",
+    prompt_new_task: "请输入新的待办事项：",
+    alert_placement: "请选择位置！",
+    prompt_duration: "请输入'{task}'的时间。\n例如：'1小时'，'30分钟'",
+    alert_duration_error: "无法理解时间。请输入如 '1小时 30分钟'。",
+    confirm_reset: "要重置所有日程并重新开始吗？",
+    confirm_complete: "完成了'{task}'吗？",
+    label_bedtime: "就寝时间",
+    current_status: "进行中"
+  },
+  ja: {
+    reset: "初期化",
+    step1_title: "今日のやることを<br>すべて書いてください",
+    step1_subtitle: "順番は後で決められます。",
+    placeholder: "例：英語の勉強",
+    intro_title: "Routine Flowを200%活用",
+    intro_step1: "入力",
+    intro_step2: "時間配分",
+    intro_step3: "完成",
+    intro_desc: "複雑な計画は不要。<br>やることを書くだけで時間が整理されます。",
+    footer_about: "サービス紹介",
+    footer_privacy: "プライバシー",
+    footer_terms: "利用規約",
+    btn_next: "次へ",
+    step2_title: "いつ、どのくらい<br>行いますか？",
+    step2_subtitle: "時間を調整して順番を変えてみてください。",
+    label_wakeup: "起床時間",
+    standby_meal: "食事",
+    standby_rest: "休憩",
+    step3_title: "今日のルーチンが<br>完成しました！",
+    step3_subtitle: "充実した一日を。",
+    btn_edit: "修正",
+    btn_save: "保存",
+    modal_title: "時間設定",
+    btn_cancel: "キャンセル",
+    btn_confirm: "確認",
+    prompt_new_task: "新しいタスクを入力してください:",
+    alert_placement: "場所を選択してください！",
+    prompt_duration: "'{task}'の時間を入力してください。\n例: '1時間', '30分'",
+    alert_duration_error: "時間を理解できませんでした。'1時間 30分'のように入力してください。",
+    confirm_reset: "すべての予定を初期化して最初に戻りますか？",
+    confirm_complete: "'{task}'を完了しましたか？",
+    label_bedtime: "就寝時間",
+    current_status: "進行中"
+  }
 };
 
 // DOM Elements
 const els = {
   app: document.getElementById('app'),
   btnReset: document.getElementById('btn-reset'), // Global Reset
+  langSelector: document.getElementById('lang-selector'), // Language Selector
   step1: document.getElementById('step-1'),
   step2: document.getElementById('step-2'),
   step3: document.getElementById('step-3'),
@@ -23,6 +168,7 @@ const els = {
   // Step 2
   planningList: document.getElementById('planning-list'),
   wakeUpBtn: document.getElementById('wake-up-time-btn'),
+  btnToStep3: document.getElementById('btn-to-step-3'),
 
   // Step 3
   finalTimeline: document.getElementById('final-timeline'),
@@ -40,6 +186,7 @@ const els = {
 function init() {
   restoreState();
   setupEventListeners();
+  setLanguage(state.lang); // Apply language
   renderStep();
   updateRealTimeStatus(); // Initialize real-time visualization
 }
@@ -52,14 +199,113 @@ function restoreState() {
       state.step = parsed.step || 1;
       state.tasks = parsed.tasks || [];
       state.wakeUpTime = parsed.wakeUpTime || '07:00';
+      state.lang = parsed.lang || 'ko';
     } catch (e) {
       console.error('State restore failed', e);
+    }
+  } else {
+    // Detect browser language if no save
+    const browserLang = navigator.language.slice(0, 2);
+    if (['en', 'zh', 'ja'].includes(browserLang)) {
+      state.lang = browserLang;
+    } else {
+      state.lang = 'ko';
     }
   }
 }
 
 function saveState() {
   localStorage.setItem('routine-flow-state', JSON.stringify(state));
+}
+
+function setLanguage(lang) {
+  state.lang = lang;
+  if (els.langSelector) els.langSelector.value = lang;
+  saveState();
+
+  const t = translations[lang];
+  if (!t) return;
+
+  // Global
+  if (els.btnReset) els.btnReset.textContent = t.reset;
+
+  // Step 1
+  const step1Title = document.querySelector('#step-1 .step-title');
+  if (step1Title) step1Title.innerHTML = t.step1_title;
+  const step1Sub = document.querySelector('#step-1 .step-subtitle');
+  if (step1Sub) step1Sub.textContent = t.step1_subtitle;
+  if (els.taskInput) els.taskInput.placeholder = t.placeholder;
+  if (els.btnToStep2) {
+    els.btnToStep2.textContent = t.btn_next;
+  }
+  if (els.btnToStep3) {
+    els.btnToStep3.textContent = t.btn_next;
+  }
+
+  // Intro
+  const introTitle = document.querySelector('.intro-title');
+  if (introTitle) introTitle.textContent = t.intro_title;
+  const introItems = document.querySelectorAll('.intro-step-item p');
+  if (introItems.length >= 3) {
+    introItems[0].textContent = t.intro_step1;
+    introItems[1].textContent = t.intro_step2;
+    introItems[2].textContent = t.intro_step3;
+  }
+  const introDesc = document.querySelector('.intro-desc');
+  if (introDesc) introDesc.innerHTML = t.intro_desc;
+
+  // Footer
+  const footerLinks = document.querySelectorAll('.footer-links a');
+  if (footerLinks.length >= 3) {
+    footerLinks[0].textContent = t.footer_about;
+    footerLinks[1].textContent = t.footer_privacy;
+    footerLinks[2].textContent = t.footer_terms;
+  }
+
+  // Step 2
+  const step2Title = document.querySelector('#step-2 .step-sub-title'); // Assuming class name
+  if (step2Title) step2Title.innerHTML = t.step2_title;
+  const step2Desc = document.querySelector('#step-2 .step-desc');
+  if (step2Desc) step2Desc.textContent = t.step2_subtitle;
+  const wakeupLabel = document.querySelector('.wakeup-row span');
+  if (wakeupLabel) wakeupLabel.textContent = t.label_wakeup;
+
+  // Standby Items
+  const standbyItems = document.querySelectorAll('.standby-item');
+  standbyItems.forEach(item => {
+    const type = item.dataset.type;
+    const txt = type === 'meal' ? t.standby_meal : t.standby_rest;
+    const duration = type === 'meal' ? '(30min)' : type === 'rest' ? '(10min)' : '';
+    // Preserve icon
+    const icon = item.querySelector('.icon').outerHTML;
+    item.innerHTML = `${icon} ${txt} ${duration.replace('min', t.ko ? '분' : 'min')}`;
+    // A bit hacky but works for now. Proper way should be structured.
+    // Let's revert to simple text replacement if structure is consistent
+    // Actually duration logic is tricky with translation. Simplification:
+    // Just replace text node after icon.
+    if (item.childNodes.length > 1) {
+      // item.childNodes[2] is likely the text if [0] is newline [1] is span.
+      // Safe replace:
+      item.innerHTML = `${icon} ${txt} (${type === 'meal' ? 30 : 10}${lang === 'ko' ? '분' : 'min'})`;
+    }
+  });
+
+  // Step 3
+  const step3Title = document.querySelector('#step-3 .step-title');
+  if (step3Title) step3Title.innerHTML = t.step3_title;
+  const step3Sub = document.querySelector('#step-3 .step-subtitle');
+  if (step3Sub) step3Sub.textContent = t.step3_subtitle;
+  if (els.btnEditCallback) els.btnEditCallback.textContent = t.btn_edit;
+
+  // Modal
+  const modalTitle = document.getElementById('modal-picker-title');
+  if (modalTitle) modalTitle.textContent = t.modal_title;
+  if (els.pickerCancel) els.pickerCancel.textContent = t.btn_cancel;
+  if (els.pickerConfirm) els.pickerConfirm.textContent = t.btn_confirm;
+
+  // Re-render lists to update inner texts if necessary
+  if (state.step === 2) renderPlanningList();
+  if (state.step === 3) renderFinalTimeline();
 }
 
 // Render Logic
@@ -296,7 +542,8 @@ function renderZone(index, timeVal) {
 }
 
 function promptNewTask() {
-  const text = prompt("새로운 할 일을 입력하세요:");
+  const t = translations[state.lang];
+  const text = prompt(t.prompt_new_task);
   if (text && text.trim()) {
     state.pendingTask = {
       id: Date.now(),
@@ -305,7 +552,7 @@ function promptNewTask() {
       startTime: ''
     };
     // Enter Placement Mode
-    alert("원하는 위치를 선택해주세요!");
+    alert(t.alert_placement);
     renderPlanningList();
   }
 }
@@ -335,8 +582,9 @@ function updateDuration(index, delta) {
 function editDurationNatural(index) {
   if (state.pendingTask) return;
 
+  const t = translations[state.lang];
   const task = state.tasks[index];
-  const input = prompt(`'${task.text}'의 시간을 입력해주세요.\n예: '1시간', '30분', '1시간 20분'`);
+  const input = prompt(t.prompt_duration.replace('{task}', task.text));
 
   if (input) {
     const minutes = parseNaturalDuration(input);
@@ -346,7 +594,7 @@ function editDurationNatural(index) {
       renderPlanningList();
       renderLiveClock(); // Update clock immediately
     } else {
-      alert("시간을 이해하지 못했어요. '1시간 30분' 처럼 입력해주세요.");
+      alert(t.alert_duration_error);
     }
   }
 }
@@ -404,7 +652,8 @@ function handleDrop(e) {
 
   if (type === 'meal' || type === 'rest') {
     // Insert New Item
-    const text = type === 'meal' ? '식사' : '휴식';
+    const t = translations[state.lang];
+    const text = type === 'meal' ? t.standby_meal : t.standby_rest;
     const duration = type === 'meal' ? 30 : 10;
 
     const newTask = {
@@ -453,11 +702,12 @@ function handleDragEnd() {
 // STEP 3 LOGIC: Final Timeline
 function renderFinalTimeline() {
   els.finalTimeline.innerHTML = '';
+  const t = translations[state.lang];
 
   // Recalculate one last time to be sure
   let currentTime = parseTime(state.wakeUpTime);
 
-  state.tasks.forEach(task => {
+  state.tasks.forEach((task, index) => { // Added index arg
     const startTimeStr = formatTime(currentTime);
     currentTime = addMinutes(currentTime, task.duration);
     const endTimeStr = formatTime(currentTime);
@@ -470,15 +720,16 @@ function renderFinalTimeline() {
       <div class="timeline-dot"></div>
       <div class="timeline-time">
          <span class="task-index-badge small" style="margin-right:8px">${index + 1}</span>
-         ${startTimeStr} - ${endTimeStr} (${task.duration}분)
+         ${startTimeStr} - ${endTimeStr} (${task.duration}${t.ko ? '분' : 'min'})
       </div>
       <div class="timeline-content">${task.text} ${task.completed ? '✅' : ''}</div>
     `;
 
+
     // Double click to complete
     item.addEventListener('dblclick', () => {
       if (!task.completed) {
-        if (confirm(`'${task.text}'를 완료했나요?`)) {
+        if (confirm(t.confirm_complete.replace('{task}', task.text))) {
           task.completed = true;
           saveState();
           renderFinalTimeline();
@@ -500,10 +751,11 @@ function renderFinalTimeline() {
   bedItem.innerHTML = `
     <div class="timeline-dot" style="background:var(--toss-grey)"></div>
     <div class="timeline-time">${formatTime(currentTime)}</div>
-    <div class="timeline-content" style="color:var(--toss-grey)">취침 시간</div>
+    <div class="timeline-content" style="color:var(--toss-grey)">${t.label_bedtime}</div>
   `;
   els.finalTimeline.appendChild(bedItem);
 }
+
 
 // Time Utils
 function parseTime(str) {
@@ -529,7 +781,29 @@ let pickerCallback = null;
 function openTimePicker(currentVal, onConfirm) {
   els.modal.classList.remove('hidden');
   renderPickerColumns();
-  // Scroll to currentVal logic here (skipped for brevity, defaulting to 07:00 or current)
+
+  // Scroll to current value
+  // currentVal is "HH:mm"
+  const [hStr, mStr] = currentVal.split(':');
+  const h = parseInt(hStr, 10) || 7;
+  const m = parseInt(mStr, 10) || 0;
+
+  // Wait for layout
+  setTimeout(() => {
+    // Hour (0-23)
+    // Item height 50px. Padding 75px. 
+    // scrollTop = index * 50 centers the item.
+    if (els.pickerHour) els.pickerHour.scrollTop = h * 50;
+
+    // Minute (0, 5, 10... 55) => index 0..11
+    const mIndex = Math.floor(m / 5);
+    if (els.pickerMinute) els.pickerMinute.scrollTop = mIndex * 50;
+
+    // Update active highlight immediately
+    updateActivePickerItem(els.pickerHour);
+    updateActivePickerItem(els.pickerMinute);
+  }, 0);
+
   pickerCallback = onConfirm;
 }
 
@@ -564,9 +838,11 @@ function renderPickerColumns() {
 
 // Reset
 function resetRoutine() {
-  if (confirm('모든 일정을 초기화하고 처음으로 돌아갈까요?')) {
+  const t = translations[state.lang];
+  if (confirm(t.confirm_reset)) {
     state.step = 1;
     state.tasks = [];
+
     state.wakeUpTime = '07:00';
     saveState();
     renderStep();
@@ -689,6 +965,13 @@ function setupEventListeners() {
   if (els.btnReset) {
     els.btnReset.addEventListener('click', resetRoutine);
   }
+  // Language Selector
+  if (els.langSelector) {
+    els.langSelector.addEventListener('change', (e) => {
+      setLanguage(e.target.value);
+    });
+  }
+
   // Step 1
   els.taskInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
@@ -699,6 +982,12 @@ function setupEventListeners() {
   els.btnToStep2.addEventListener('click', () => {
     goToStep(2);
   });
+
+  if (els.btnToStep3) {
+    els.btnToStep3.addEventListener('click', () => {
+      goToStep(3);
+    });
+  }
 
   // Step 2
   els.wakeUpBtn.addEventListener('click', () => {
@@ -734,6 +1023,7 @@ function setupEventListeners() {
     setTimeout(() => updateActivePickerItem(col), 100);
   });
 }
+
 
 // Real-Time Logic for "Passing Time"
 function updateRealTimeStatus() {
